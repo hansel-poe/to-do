@@ -16,6 +16,7 @@ function onAddItemSubmit(e) {
     return;
   }
 
+  //Check to see if in edit mode or not
   if (isEditMode) {
     const itemToEdit = itemList.querySelector(".edit-mode");
 
@@ -32,7 +33,6 @@ function onAddItemSubmit(e) {
 
   addItemToDOM(newItem);
   addItemToStorage(newItem);
-  itemInput.value = "";
   checkUI();
 }
 
@@ -45,12 +45,6 @@ function addItemToDOM(item) {
   itemList.appendChild(li);
 }
 
-function createIcon(classes) {
-  const icon = document.createElement("i");
-  icon.className = classes;
-  return icon;
-}
-
 function createButton(classes) {
   const button = document.createElement("button");
   button.className = classes;
@@ -59,9 +53,14 @@ function createButton(classes) {
   return button;
 }
 
+function createIcon(classes) {
+  const icon = document.createElement("i");
+  icon.className = classes;
+  return icon;
+}
+
 function addItemToStorage(item) {
   let itemsFromStorage = getItemsFromStorage();
-
   itemsFromStorage.push(item);
   localStorage.setItem("items", JSON.stringify(itemsFromStorage));
 }
@@ -82,6 +81,16 @@ function onClickItem(e) {
     removeItem(e.target.parentElement.parentElement);
   } else {
     setItemToEdit(e.target);
+  }
+}
+
+function removeItem(item) {
+  if ((confirm, "Are You Sure?")) {
+    item.remove();
+
+    // Remove item from storage
+    removeItemFromStorage(item.textContent);
+    checkUI();
   }
 }
 
@@ -106,16 +115,6 @@ function setItemToEdit(item) {
   itemInput.value = item.textContent;
 }
 
-function removeItem(item) {
-  if ((confirm, "Are You Sure?")) {
-    item.remove();
-
-    // Remove item from storage
-    removeItemFromStorage(item.textContent);
-    checkUI();
-  }
-}
-
 function clearItems() {
   while (itemList.firstChild) {
     itemList.removeChild(itemList.firstChild);
@@ -127,6 +126,7 @@ function clearItems() {
 
 function checkUI() {
   itemInput.value = "";
+
   const items = itemList.querySelectorAll("li");
   if (items.length === 0) {
     clearBtn.style.display = "none";
@@ -135,6 +135,7 @@ function checkUI() {
     clearBtn.style.display = "block";
     itemFilter.style.display = "block";
   }
+
   formBtn.innerHTML = '<i class = "fa-solid fa-plus"></i> Add Item';
   formBtn.style.backgroundColor = "#48c8ef";
   isEditMode = false;
